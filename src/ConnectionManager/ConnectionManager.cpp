@@ -7,7 +7,7 @@
 
 #include "../Logger/Logger.h"
 
-#define DBG
+//#define DBG
 
 void ConnectionManager::newConnection() {
     _lock.lock();
@@ -56,18 +56,21 @@ void ConnectionManager::start(std::string command, Connection* connection) {
     result = mysql_store_result(connection->connection);
 
     _lock.lock();
-    file << "\n=========================\n\n";    
-    while (( row = mysql_fetch_row(result)) != nullptr) {
-        unsigned int num_fields;
+    if (result != nullptr) {
+        file << "\n=========================\n\n";    
+        while (( row = mysql_fetch_row(result)) != nullptr) {
+            unsigned int num_fields;
 
-        num_fields = mysql_num_fields(result);
-        for(unsigned int i = 0; i < num_fields; i++)
-        {
-            file << row[i] << "\t";
+            num_fields = mysql_num_fields(result);
+            for(unsigned int i = 0; i < num_fields; i++)
+            {
+                file << row[i] << "\t";
+            }
+
+            file << std::endl;
         }
-
-        file << std::endl;
-    }
+    }    
+    
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Query " << command.c_str() << " finished successfully.";            
     _lock.unlock();
 
