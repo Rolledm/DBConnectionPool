@@ -1,0 +1,7 @@
+src/main
+.vscode/*
+src/CMakeFiles/*
+src/CMakeCache.txt
+src/sample_0.log
+src/cmake_install.cmake
+src/Makefile
