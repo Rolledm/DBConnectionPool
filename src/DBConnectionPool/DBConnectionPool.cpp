@@ -53,8 +53,8 @@ DBConnectionPool::~DBConnectionPool() {
 
 void DBConnectionPool::handleArguments(int argc, char** argv) {
     if (argc == 1) {
-        std::cout << "Help will be here soon." << std::endl;
-        throw "Too few arguments.";
+        showHelp();
+        exit(0);
     } else {
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "-x") == 0) {
@@ -137,4 +137,17 @@ void DBConnectionPool::endWork() {
     
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
     exit(0);
+}
+
+void DBConnectionPool::showHelp() {
+    std::cout << "DBConnectionPool - utility for multi-thread work w/ database." << std::endl;
+    std::cout << "Usage: ./main [OPTIONS]" << std::endl << std::endl;
+    std::cout << "Available options:" << std::endl;
+    std::cout << "-x PATH_TO_FILE - use .xml file to initialise connections to database." << std::endl;
+    std::cout << "-o PATH_TO_FILE - specify output file." << std::endl;
+    std::cout << "-l SEVERITY_LEVEL - change logger severity level. Default: debug." << std::endl << std::endl;
+    std::cout << "Available severity levels:" << std::endl;
+    std::cout << "debug, info, warning, error, fatal." << std::endl << std::endl;
+    std::cout << "Example of usage" << std::endl;
+    std::cout << "./main -x ../../test.xml -o ~/file1 -l info" << std::endl;
 }

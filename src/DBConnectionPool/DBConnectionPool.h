@@ -20,6 +20,7 @@ public:
     void handleArguments(int argc, char** argv);
     void startWork();
     void endWork();
+    void showHelp();
 //private:
     Initialisable* init;
     QueueManager queueManager;
