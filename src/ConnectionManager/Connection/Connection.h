@@ -5,6 +5,7 @@
 #include <mysql.h>
 
 #include "../Settings/Settings.h"
+#include "../../Logger/Logger.h"
 
 class Connection {
 

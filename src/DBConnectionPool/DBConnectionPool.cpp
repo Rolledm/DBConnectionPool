@@ -1,8 +1,13 @@
 #include "DBConnectionPool.h"
 
 DBConnectionPool::DBConnectionPool(int argc, char** argv) {
+    sev_lvl = "debug";
+    outFile = "/home/rolledm/file1";
     handleArguments(argc, argv);
     init->initSettings(&queueManager.connectionManager.settings);
+    queueManager.connectionManager.outFile = outFile;
+
+    Logger::getInstance().init(sev_lvl);    
     
     for (int i = 0; i < queueManager.connectionManager.settings.numOfConnections.first; i++) {
         //queueManager.connectionManager.connections.emplace_back(new MySQLConnector(queueManager.connectionManager.settings));  // throws Exception if can't connect to db
@@ -13,7 +18,7 @@ DBConnectionPool::DBConnectionPool(int argc, char** argv) {
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Successful connection to MySQL.";
 
 
-    std::ofstream file("/home/rolledm/file1");
+    std::ofstream file(outFile);
     if (!file) {
         throw "Error w/ out file.";
     }
@@ -36,6 +41,7 @@ DBConnectionPool::~DBConnectionPool() {
     queueManager.connectionManager._lock.lock();    
     for (auto& it : queueManager.connectionManager.connections) {
         mysql_close(it->connection);
+        BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection closed.";
         delete(it);
     }
     queueManager.connectionManager.connections.clear();
@@ -60,6 +66,24 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                 }
                 
             } 
+            else if (strcmp(argv[i], "-o") == 0) {
+                if (i < argc - 1 && argv[i+1][0]!='-') {
+                    outFile = argv[i+1];
+                    i++;
+                } else {
+                    throw "Incorrect argument.";
+                }
+                
+            }
+            else if (strcmp(argv[i], "-l") == 0) {
+                if (i < argc - 1 && argv[i+1][0]!='-') {
+                    sev_lvl = argv[i+1];
+                    i++;
+                } else {
+                    throw "Incorrect argument.";
+                }
+                
+            }
         }
     }
 }
@@ -72,7 +96,7 @@ void DBConnectionPool::startWork() {
     while (true) {
         std::cout << "Enter your command: ";
         std::getline(std::cin, promt);
-        if (promt == "exit") {break;}
+        if (promt == "exit") {endWork();}
         if (promt == "script") {
             std::cout << "Path: ";
             std::getline(std::cin, promt);
@@ -92,4 +116,25 @@ void DBConnectionPool::startWork() {
         //thread.detach();
         queueManager.push(promt);              
     }
+}
+
+void DBConnectionPool::endWork() {
+    delete(init);
+    //for (auto& it : queueManager.connectionManager.connections) {
+       // mysql_close(it->connection);
+    // }
+    queueManager.connectionManager._lock.unlock();
+    queueManager.connectionManager._lock.lock();    
+    for (auto& it : queueManager.connectionManager.connections) {
+        mysql_close(it->connection);
+        //BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection closed.";
+        delete(it);
+    }
+    queueManager.connectionManager.connections.clear();
+    queueManager.connectionManager._lock.unlock();    
+    queueManager._lock.unlock();
+
+    
+    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
+    exit(0);
 }

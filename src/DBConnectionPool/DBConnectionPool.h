@@ -19,9 +19,12 @@ public:
     ~DBConnectionPool();
     void handleArguments(int argc, char** argv);
     void startWork();
+    void endWork();
 //private:
     Initialisable* init;
     QueueManager queueManager;
+    std::string outFile;
+    std::string sev_lvl;
 };
 
 #endif

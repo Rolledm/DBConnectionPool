@@ -8,6 +8,7 @@ Connection::Connection(Settings settings) {
 
 Connection::~Connection() {
     mysql_close(connection);
+    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection closed.";    
 }
 
 void Connection::init(Settings settings) {

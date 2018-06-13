@@ -22,6 +22,7 @@ public://private:
     std::mutex _lock;
     Settings settings;
     std::vector <Connection*> connections;
+    std::string outFile;
 };
 
 #endif

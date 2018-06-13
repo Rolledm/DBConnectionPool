@@ -3,6 +3,7 @@
 #include "DBConnectionPool/DBConnectionPool.h"
 
 int main(int argc, char** argv) {
+
     try {
         DBConnectionPool pool(argc, argv);
         pool.startWork();
@@ -15,7 +16,5 @@ int main(int argc, char** argv) {
         BOOST_LOG_SEV(Logger::getInstance().lg, fatal) << "Other exception.";        
         return 3;
     }
-    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work finished.";
-    exit(0);
     return 0;
 }

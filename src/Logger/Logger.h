@@ -21,8 +21,9 @@ class Logger {
 public:
     static Logger& getInstance();
     src::severity_logger<severity_level> lg;
+    void init(std::string sev_lvl);
 private:
-    Logger();
+    Logger() = default;
     Logger(const Logger&) = delete;
     Logger& operator=(Logger&) = delete;
 };
