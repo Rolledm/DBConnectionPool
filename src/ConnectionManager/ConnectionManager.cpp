@@ -11,7 +11,10 @@
 
 void ConnectionManager::newConnection() {
     _lock.lock();
-    connections.emplace_back(new Connection(settings));
+    if (connections.size() < settings.numOfConnections.second)
+        connections.emplace_back(new Connection(settings));
+    else
+        BOOST_LOG_SEV(Logger::getInstance().lg, error) << "Can't create new connection. Number of connections is max already.";
     _lock.unlock();
 }
 
