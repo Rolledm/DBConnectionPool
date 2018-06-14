@@ -5,3 +5,9 @@ src/CMakeCache.txt
 src/sample_0.log
 src/cmake_install.cmake
 src/Makefile
+tests/CMakeFiles/*
+tests/CMakeCache.txt
+tests/sample_0.log
+tests/cmake_install.cmake
+tests/Makefile
+tests/mainTest

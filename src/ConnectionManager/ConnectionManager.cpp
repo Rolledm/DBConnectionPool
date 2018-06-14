@@ -19,7 +19,6 @@ void ConnectionManager::removeConnection(Connection* connection) {
     _lock.lock();
     connections.erase(std::remove(connections.begin(), connections.end(), connection), connections.end());
     delete(connection);
-    //BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection removed. Num of connections: " << connections.size();
     _lock.unlock();
 }
 
@@ -40,7 +39,7 @@ void ConnectionManager::start(std::string command, Connection* connection) {
     #ifdef DBG
         std::this_thread::sleep_for(std::chrono::seconds(3));
     #endif
-    std::ofstream file(outFile, std::ios::app); //TODO
+    std::ofstream file(outFile, std::ios::app);
     MYSQL_RES *result;
     MYSQL_ROW row;
     int query_state;

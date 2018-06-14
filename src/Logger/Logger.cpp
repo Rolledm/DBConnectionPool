@@ -16,17 +16,22 @@ void Logger::init(std::string string) {
         keywords::auto_flush = true        
     );
 
-    auto a = logging::trivial::debug;
 
-    if (string == "debug") a = logging::trivial::debug;
-    else if (string == "info") a = logging::trivial::info;
-    else if (string == "warning") a = logging::trivial::warning;
-    else if (string == "error") a = logging::trivial::error;
-    else if (string == "fatal") a = logging::trivial::fatal;
+    changeSeverity("string");
+    logging::add_common_attributes();
+}
+
+void Logger::changeSeverity(std::string sev_lvl) {
+    auto a = logging::trivial::debug;
+    
+    if (sev_lvl == "debug") a = logging::trivial::debug;
+    else if (sev_lvl == "info") a = logging::trivial::info;
+    else if (sev_lvl == "warning") a = logging::trivial::warning;
+    else if (sev_lvl == "error") a = logging::trivial::error;
+    else if (sev_lvl == "fatal") a = logging::trivial::fatal;
     
     logging::core::get()->set_filter
     (
         logging::trivial::severity >= a 
     );
-    logging::add_common_attributes();
 }

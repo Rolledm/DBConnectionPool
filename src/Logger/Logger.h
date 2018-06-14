@@ -22,6 +22,7 @@ public:
     static Logger& getInstance();
     src::severity_logger<severity_level> lg;
     void init(std::string sev_lvl);
+    void changeSeverity(std::string sev_lvl);
 private:
     Logger() = default;
     Logger(const Logger&) = delete;
