@@ -3,16 +3,18 @@
 DBConnectionPool::DBConnectionPool(int argc, char** argv) {
     sev_lvl = "debug";
     outFile = "/home/rolledm/file1";
+    Logger::getInstance().init(sev_lvl);        
+    init = nullptr;
     handleArguments(argc, argv);
+    if (init == nullptr) {
+        throw "Initialiser not specified.";
+    }
+    Logger::getInstance().changeSeverity(sev_lvl);
     init->initSettings(&queueManager.connectionManager.settings);
     queueManager.connectionManager.outFile = outFile;
 
-    Logger::getInstance().init(sev_lvl);    
     
-    for (int i = 0; i < queueManager.connectionManager.settings.numOfConnections.first; i++) {
-        //queueManager.connectionManager.connections.emplace_back(new MySQLConnector(queueManager.connectionManager.settings));  // throws Exception if can't connect to db
-        queueManager.connectionManager.newConnection();
-    }
+    queueManager.connectionManager.init();
 
     std::cout << "Successful connection to MySQL." << std::endl;
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Successful connection to MySQL.";
@@ -32,24 +34,6 @@ DBConnectionPool::DBConnectionPool(int argc, char** argv) {
 }
 
 
-DBConnectionPool::~DBConnectionPool() {
-    delete(init);
-    //for (auto& it : queueManager.connectionManager.connections) {
-       // mysql_close(it->connection);
-   // }
-    queueManager.connectionManager._lock.unlock();
-    queueManager.connectionManager._lock.lock();    
-    for (auto& it : queueManager.connectionManager.connections) {
-        mysql_close(it->connection);
-        BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection closed.";
-        delete(it);
-    }
-    queueManager.connectionManager.connections.clear();
-    queueManager.connectionManager._lock.unlock();    
-    queueManager._lock.unlock();
-    //std::cout << "deleted." << std::endl;
-    
-}
 
 void DBConnectionPool::handleArguments(int argc, char** argv) {
     if (argc == 1) {
@@ -120,14 +104,9 @@ void DBConnectionPool::startWork() {
 
 void DBConnectionPool::endWork() {
     delete(init);
-    //for (auto& it : queueManager.connectionManager.connections) {
-       // mysql_close(it->connection);
-    // }
     queueManager.connectionManager._lock.unlock();
     queueManager.connectionManager._lock.lock();    
     for (auto& it : queueManager.connectionManager.connections) {
-        mysql_close(it->connection);
-        //BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection closed.";
         delete(it);
     }
     queueManager.connectionManager.connections.clear();

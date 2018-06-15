@@ -9,6 +9,7 @@
 
 class ConnectionManager {
 public:
+    void init();
     void newConnection();
     void removeConnection(Connection* connection);
     Connection* findConnection();

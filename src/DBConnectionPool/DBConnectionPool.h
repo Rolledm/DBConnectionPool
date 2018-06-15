@@ -16,12 +16,12 @@
 class DBConnectionPool {
 public:
     DBConnectionPool(int argc, char** argv);
-    ~DBConnectionPool();
+    ~DBConnectionPool() = default;
     void handleArguments(int argc, char** argv);
     void startWork();
     void endWork();
     void showHelp();
-//private:
+protected:
     Initialisable* init;
     QueueManager queueManager;
     std::string outFile;

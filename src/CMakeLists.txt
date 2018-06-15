@@ -15,7 +15,8 @@ add_executable(main main.cpp DBConnectionPool/DBConnectionPool.cpp DBConnectionP
 
 target_link_libraries(main mysqlclient ${GTEST_LIBRARIES} ${Boost_LOG_LIBRARY} 
                         ${CMAKE_THREAD_LIBS_INIT} -lz -lm -lrt -latomic -ldl 
-                        -lboost_system -lboost_log_setup -lboost_log -lboost_thread -lpthread)
+                        -lboost_system -lboost_log_setup -lboost_log -lboost_thread -lpthread -lgcov)
 
-set(CMAKE_EXE_LINKER_FLAGS "-lpthread -lz -lm -lrt -latomic -ldl -lboost_system -lboost_log_setup -lboost_log -lboost_thread")
+set(CMAKE_EXE_LINKER_FLAGS "-lpthread -lz -lm -lrt -latomic -ldl -lboost_system -lboost_log_setup -lboost_log -lboost_thread -lgcov")
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
+set(CMAKE_CXX_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS} --coverage")

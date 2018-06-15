@@ -15,7 +15,6 @@ public:
 
     void init(Settings settings);
 
-//private:
 
     MYSQL mysql;
     MYSQL* connection;

@@ -7,7 +7,7 @@ class Initialisable {
 public:
     Initialisable (std::string path) {this->path = path;}
     virtual void initSettings(Settings* settings) = 0;
-//private:
+protected:
     std::string path;
 };
 

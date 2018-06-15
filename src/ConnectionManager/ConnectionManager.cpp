@@ -9,6 +9,12 @@
 
 //#define DBG
 
+void ConnectionManager::init() {
+    for (int i = 0; i < settings.numOfConnections.first; i++) {
+        newConnection();
+    }
+}
+
 void ConnectionManager::newConnection() {
     _lock.lock();
     if (connections.size() < settings.numOfConnections.second)
