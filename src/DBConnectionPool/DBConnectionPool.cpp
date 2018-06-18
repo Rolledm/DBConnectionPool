@@ -1,21 +1,21 @@
 #include "DBConnectionPool.h"
 
 DBConnectionPool::DBConnectionPool(int argc, char** argv) {
-    sev_lvl = "debug";
-    outFile = "file1";
-    isInitialised = false;
+    sev_lvl = "debug";          //setting
+    outFile = "file1";          //default
+    isInitialised = false;      //values
     Logger::getInstance().init(sev_lvl);        
     handleArguments(argc, argv);
     if (isInitialised == false) {
         throw "Initialiser not specified.";
     }
-    Logger::getInstance().changeSeverity(sev_lvl);
-    queueManager.connectionManager.init(outFile);
+    Logger::getInstance().changeSeverity(sev_lvl);  //handle args and init components
+    queueManager.initOutFile(outFile);
 
     std::cout << "Hello." << std::endl;
 
 
-    std::ofstream file(outFile);
+    std::ofstream file(outFile);    //checking output file
     if (!file) {
         throw "Error w/ out file.";
     }
@@ -30,7 +30,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
         exit(0);
     } else {
         for (int i = 1; i < argc; i++) {
-            if (strcmp(argv[i], "-x") == 0) {
+            if (strcmp(argv[i], "-x") == 0) {                   //xml
                 if (i < argc - 1 && argv[i+1][0]!='-') {
                     std::ifstream file(argv[i+1]);
                     if (!file) {
@@ -38,8 +38,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                     }
                     file.close();
 
-                    queueManager.connectionManager.getSettings().init(new InitByXML(argv[i+1]));
-                    //init = new InitByXML(argv[i+1]);
+                    queueManager.initSettings(new InitByXML(argv[i+1]));
                     isInitialised = true;
                     i++;
                 } else {
@@ -47,7 +46,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                 }
                 
             } 
-            else if (strcmp(argv[i], "-o") == 0) {
+            else if (strcmp(argv[i], "-o") == 0) {              //output file
                 if (i < argc - 1 && argv[i+1][0]!='-') {
                     outFile = argv[i+1];
                     i++;
@@ -56,7 +55,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                 }
                 
             }
-            else if (strcmp(argv[i], "-l") == 0) {
+            else if (strcmp(argv[i], "-l") == 0) {              //logger severity level
                 if (i < argc - 1 && argv[i+1][0]!='-') {
                     sev_lvl = argv[i+1];
                     i++;
@@ -96,8 +95,7 @@ void DBConnectionPool::startWork() {
 }
 
 void DBConnectionPool::endWork() {
-    queueManager.connectionManager.endWork();
-    
+    queueManager.endWork();
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
     exit(0);
 }

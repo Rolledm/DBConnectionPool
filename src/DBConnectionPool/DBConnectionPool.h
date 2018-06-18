@@ -23,7 +23,6 @@ public:
     void showHelp();
     
 protected:
-    //Initialisable* init;
     QueueManager queueManager;
     std::string outFile;
     std::string sev_lvl;

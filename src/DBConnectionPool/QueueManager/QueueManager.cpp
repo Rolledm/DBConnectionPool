@@ -7,10 +7,8 @@
 
 #include "../../Logger/Logger.h"
 
-
 void QueueManager::startWork() {
-    //BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Num of connections: " << connectionManager.connections.size();
-    std::thread thread(&ConnectionManager::watchForUnusedConnections, &connectionManager);
+    std::thread thread(&ConnectionManager::watchForUnusedConnections, &connectionManager);  // starting killer of unused connections
     
     while (true) {
 
@@ -42,4 +40,16 @@ std::string QueueManager::pop() {
     std::string str = queue.front();
     queue.pop_front();
     return str;
+}
+
+void QueueManager::initSettings(Initialisable* init) {
+    connectionManager.getSettings().init(init);
+}
+
+void QueueManager::initOutFile(std::string outfile) {
+    connectionManager.init(outfile);
+}
+
+void QueueManager::endWork() {
+    connectionManager.endWork();
 }

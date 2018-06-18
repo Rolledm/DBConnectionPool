@@ -9,12 +9,14 @@ public:
     void startWork();
     void push(std::string task);
     std::string pop();
+    
+    void initSettings(Initialisable* init);
+    void initOutFile(std::string);
+    void endWork();
 
 private:
     std::list<std::string> queue; 
     std::mutex _lock;
-
-public:
     ConnectionManager connectionManager;
 };
 
