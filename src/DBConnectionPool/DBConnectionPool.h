@@ -3,8 +3,8 @@
 
 #include "../ConnectionManager/Connection/Connection.h"
 #include "../Logger/Logger.h"
-#include "Initialisable/Initialisable.h"
-#include "Initialisable/InitByXML.h"
+#include "../ConnectionManager/Initialisable/Initialisable.h"
+#include "../ConnectionManager/Initialisable/InitByXML.h"
 #include "QueueManager/QueueManager.h"
 #include "../ConnectionManager/Settings/Settings.h"
 
@@ -23,10 +23,12 @@ public:
     void showHelp();
     
 protected:
-    Initialisable* init;
+    //Initialisable* init;
     QueueManager queueManager;
     std::string outFile;
     std::string sev_lvl;
+
+    bool isInitialised;
 
 private:
     DBConnectionPool(const DBConnectionPool&) = delete;

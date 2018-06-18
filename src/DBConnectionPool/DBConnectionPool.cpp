@@ -3,18 +3,16 @@
 DBConnectionPool::DBConnectionPool(int argc, char** argv) {
     sev_lvl = "debug";
     outFile = "file1";
+    isInitialised = false;
     Logger::getInstance().init(sev_lvl);        
-    init = nullptr;
     handleArguments(argc, argv);
-    if (init == nullptr) {
+    if (isInitialised == false) {
         throw "Initialiser not specified.";
     }
     Logger::getInstance().changeSeverity(sev_lvl);
-    init->initSettings(&queueManager.connectionManager.getSettings());
     queueManager.connectionManager.init(outFile);
 
-    std::cout << "Successful connection to MySQL." << std::endl;
-    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Successful connection to MySQL.";
+    std::cout << "Hello." << std::endl;
 
 
     std::ofstream file(outFile);
@@ -40,7 +38,9 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                     }
                     file.close();
 
-                    init = new InitByXML(argv[i+1]);
+                    queueManager.connectionManager.getSettings().init(new InitByXML(argv[i+1]));
+                    //init = new InitByXML(argv[i+1]);
+                    isInitialised = true;
                     i++;
                 } else {
                     throw "There is no .xml file specified.";
@@ -96,7 +96,6 @@ void DBConnectionPool::startWork() {
 }
 
 void DBConnectionPool::endWork() {
-    delete(init);
     queueManager.connectionManager.endWork();
     
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";

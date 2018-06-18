@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../src/DBConnectionPool/DBConnectionPool.h"
+#include "../../src/DBConnectionPool/DBConnectionPool.h"
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);

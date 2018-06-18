@@ -3,8 +3,13 @@
 
 #include <utility>
 #include <string>
+#include "../Initialisable/Initialisable.h"
+#include "../Initialisable/InitByXML.h"
 
-typedef struct {
+class Settings {
+public:
+    void init(Initialisable* init);
+
     std::string username;
     std::string password;
     std::string host;
@@ -15,6 +20,6 @@ typedef struct {
     std::pair<int, int> numOfConnections; // first - min, second - max
     int timeout; // in seconds
 
-} Settings;
+};
 
 #endif

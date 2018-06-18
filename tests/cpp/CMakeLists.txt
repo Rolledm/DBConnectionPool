@@ -10,9 +10,9 @@ find_package(Threads)
 
 include_directories(${GTEST_INCLUDE_DIRS} /usr/include/mysql ${Boost_INCLUDE_DIR})
 
-add_executable(mainTest mainTest.cpp ../src/DBConnectionPool/DBConnectionPool.cpp ../src/DBConnectionPool/QueueManager/QueueManager.cpp
-                ../src/Logger/Logger.cpp ../src/DBConnectionPool/Initialisable/InitByXML.cpp ../src/ConnectionManager/Connection/Connection.cpp
-                ../src/ConnectionManager/ConnectionManager.cpp
+add_executable(mainTest mainTest.cpp ../../src/DBConnectionPool/DBConnectionPool.cpp ../../src/DBConnectionPool/QueueManager/QueueManager.cpp
+                ../../src/Logger/Logger.cpp ../../src/ConnectionManager/Initialisable/InitByXML.cpp ../../src/ConnectionManager/Connection/Connection.cpp
+                ../../src/ConnectionManager/ConnectionManager.cpp ../../src/ConnectionManager/Settings/Settings.cpp
                 LogTest.cpp ConnectionManagerTest.cpp QueueManagerTest.cpp)
 
 target_link_libraries(mainTest mysqlclient ${GTEST_LIBRARIES} ${Boost_LOG_LIBRARY} 
