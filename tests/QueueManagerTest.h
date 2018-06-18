@@ -11,7 +11,7 @@ protected:
     void SetUp() {
         init = new InitByXML("../../test.xml");
         init->initSettings(&qm.connectionManager.settings);
-        conMan.init();        
+        qm.connectionManager.init();        
         qm.connectionManager.outFile = "/home/rolledm/file1";
     }
     void TearDown() {

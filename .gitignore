@@ -11,3 +11,5 @@ tests/sample_0.log
 tests/cmake_install.cmake
 tests/Makefile
 tests/mainTest
+src/file1
+tests/file1

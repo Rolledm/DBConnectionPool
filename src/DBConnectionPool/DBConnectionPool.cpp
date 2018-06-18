@@ -2,7 +2,7 @@
 
 DBConnectionPool::DBConnectionPool(int argc, char** argv) {
     sev_lvl = "debug";
-    outFile = "/home/rolledm/file1";
+    outFile = "file1";
     Logger::getInstance().init(sev_lvl);        
     init = nullptr;
     handleArguments(argc, argv);
@@ -10,11 +10,8 @@ DBConnectionPool::DBConnectionPool(int argc, char** argv) {
         throw "Initialiser not specified.";
     }
     Logger::getInstance().changeSeverity(sev_lvl);
-    init->initSettings(&queueManager.connectionManager.settings);
-    queueManager.connectionManager.outFile = outFile;
-
-    
-    queueManager.connectionManager.init();
+    init->initSettings(&queueManager.connectionManager.getSettings());
+    queueManager.connectionManager.init(outFile);
 
     std::cout << "Successful connection to MySQL." << std::endl;
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Successful connection to MySQL.";
@@ -25,12 +22,6 @@ DBConnectionPool::DBConnectionPool(int argc, char** argv) {
         throw "Error w/ out file.";
     }
     file.close();
-
-    /*file.open("sample.log");
-    if (!file) {
-        throw "Error w/ log file.";
-    }
-    file.close();*/
 }
 
 
@@ -43,10 +34,16 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
         for (int i = 1; i < argc; i++) {
             if (strcmp(argv[i], "-x") == 0) {
                 if (i < argc - 1 && argv[i+1][0]!='-') {
+                    std::ifstream file(argv[i+1]);
+                    if (!file) {
+                        throw "Error w/ .xml file.";
+                    }
+                    file.close();
+
                     init = new InitByXML(argv[i+1]);
                     i++;
                 } else {
-                    throw "Incorrect argument.";
+                    throw "There is no .xml file specified.";
                 }
                 
             } 
@@ -55,7 +52,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                     outFile = argv[i+1];
                     i++;
                 } else {
-                    throw "Incorrect argument.";
+                    throw "There is no output file specified.";
                 }
                 
             }
@@ -64,7 +61,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                     sev_lvl = argv[i+1];
                     i++;
                 } else {
-                    throw "Incorrect argument.";
+                    throw "There is no severity level specified.";
                 }
                 
             }
@@ -75,7 +72,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
 
 void DBConnectionPool::startWork() {
     std::string promt;
-    std::thread thread(&QueueManager::startWork, &queueManager);//queueManager.startWork();
+    std::thread thread(&QueueManager::startWork, &queueManager);
     thread.detach();
     while (true) {
         std::cout << "Enter your command: ";
@@ -86,33 +83,21 @@ void DBConnectionPool::startWork() {
             std::getline(std::cin, promt);
             std::ifstream file(promt);
             if (!file) {
-                std::cout << "File error!" << std::endl;
+                std::cout << "Script file error!" << std::endl;
                 continue;
             }
             while (getline(file, promt)) {
-                //std::thread thread(&DBConnectionPool::start, this, promt);
-                //thread.detach();  
                 queueManager.push(promt);      
             }
             continue;
         }
-        //std::thread thread(&DBConnectionPool::start, this, promt);
-        //thread.detach();
         queueManager.push(promt);              
     }
 }
 
 void DBConnectionPool::endWork() {
     delete(init);
-    queueManager.connectionManager._lock.unlock();
-    queueManager.connectionManager._lock.lock();    
-    for (auto& it : queueManager.connectionManager.connections) {
-        delete(it);
-    }
-    queueManager.connectionManager.connections.clear();
-    queueManager.connectionManager._lock.unlock();    
-    queueManager._lock.unlock();
-
+    queueManager.connectionManager.endWork();
     
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
     exit(0);

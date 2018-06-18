@@ -17,7 +17,7 @@ void Logger::init(std::string string) {
     );
 
 
-    changeSeverity("string");
+    changeSeverity(string);
     logging::add_common_attributes();
 }
 

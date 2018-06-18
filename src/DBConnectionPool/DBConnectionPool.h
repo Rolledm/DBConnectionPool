@@ -21,11 +21,17 @@ public:
     void startWork();
     void endWork();
     void showHelp();
+    
 protected:
     Initialisable* init;
     QueueManager queueManager;
     std::string outFile;
     std::string sev_lvl;
+
+private:
+    DBConnectionPool(const DBConnectionPool&) = delete;
+    DBConnectionPool(const DBConnectionPool&&) = delete;
+    DBConnectionPool& operator=(DBConnectionPool&) = delete;
 };
 
 #endif

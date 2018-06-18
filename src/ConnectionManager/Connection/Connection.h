@@ -2,6 +2,7 @@
 #define CONNECTION_H
 
 #include <ctime>
+#include <memory>
 #include <mysql.h>
 
 #include "../Settings/Settings.h"
@@ -18,7 +19,7 @@ public:
 
     MYSQL mysql;
     MYSQL* connection;
-    bool isBusy;
+    std::atomic<bool> isBusy;
     std::time_t time;
 
 };

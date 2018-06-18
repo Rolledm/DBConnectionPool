@@ -4,6 +4,7 @@ Connection::Connection(Settings settings) {
     init(settings);
     isBusy = false;
     time = std::time(nullptr);
+    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Connection opened.";        
 }
 
 Connection::~Connection() {

@@ -10,8 +10,8 @@ public:
     void push(std::string task);
     std::string pop();
 
-//private:
-    std::list<std::string> queue;   //std::string -> Task
+private:
+    std::list<std::string> queue; 
     std::mutex _lock;
 
 public:
