@@ -14,6 +14,7 @@ protected:
     }
 
     void TearDown() {
+        conMan.endWork();
     }
     
     ConnectionManager conMan;

@@ -9,8 +9,8 @@ void Settings::init(Initialisable* init) {
 
    port = init->get("settings.port", 0);
    cli_flag = init->get("settings.cli_flag", 0);
-   numOfConnections.first = init->get("settings.numOfConnections.min", 0);
-   numOfConnections.second = init->get("settings.numOfConnections.max", 0);
+   numOfConnections.first = init->get("settings.numOfConnections.min", 1);
+   numOfConnections.second = init->get("settings.numOfConnections.max", 1);
    timeout = init->get("settings.timeout", 0);
    
 
