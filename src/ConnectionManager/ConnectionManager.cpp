@@ -9,18 +9,18 @@
 
 //#define DBG
 
-void ConnectionManager::init(std::string outFile) {
+void ConnectionManager::initOutFile(std::string outFile) {
     numOfOpenedConnections = 0;
     this->outFile = outFile;
-    for (int i = 0; i < settings.numOfConnections.first; i++) {
+    for (int i = 0; i < Settings::getInstance().getNumOfConnections().first; i++) {
         newConnection();
     }
 }
 
 void ConnectionManager::newConnection() {
     std::lock_guard<std::mutex> locker(_lock);
-    if (numOfOpenedConnections < settings.numOfConnections.second) {
-        connections.emplace_back(std::shared_ptr<Connection>(new Connection(settings)));
+    if (numOfOpenedConnections < Settings::getInstance().getNumOfConnections().second) {
+        connections.emplace_back(std::shared_ptr<Connection>(new Connection()));
         numOfOpenedConnections++;
     }
     else
@@ -101,11 +101,11 @@ size_t ConnectionManager::numOfFreeConnections() {
 
 void ConnectionManager::watchForUnusedConnections() {
     while (true) {
-        if (connections.size() > settings.numOfConnections.first && numOfFreeConnections() > 0) {
+        if (numOfOpenedConnections > Settings::getInstance().getNumOfConnections().first && numOfFreeConnections() > 0) {
             std::time_t time = std::time(nullptr);
             std::shared_ptr<Connection> temp = nullptr;
             for (auto& it : connections) {
-                if (time - it->time >= settings.timeout && !it->isBusy) {
+                if (time - it->time >= Settings::getInstance().getTimeout() && !it->isBusy) {
                     temp = it;
                     break;
                 }
@@ -126,8 +126,4 @@ void ConnectionManager::endWork() {
 
 int ConnectionManager::getNumOfOpenedConnections() {
     return numOfOpenedConnections;
-}
-
-Settings& ConnectionManager::getSettings() {
-    return settings;
 }

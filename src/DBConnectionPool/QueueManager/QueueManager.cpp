@@ -20,7 +20,7 @@ void QueueManager::startWork() {
             std::thread thread(&ConnectionManager::start, &connectionManager, task, tempConnection);
             thread.detach();
         } else {
-            if (connectionManager.getNumOfOpenedConnections() < connectionManager.getSettings().numOfConnections.second) {
+            if (connectionManager.getNumOfOpenedConnections() < Settings::getInstance().getNumOfConnections().second) {
                 connectionManager.newConnection();
             }
         }
@@ -42,12 +42,8 @@ std::string QueueManager::pop() {
     return str;
 }
 
-void QueueManager::initSettings(Initialisable* init) {
-    connectionManager.getSettings().init(init);
-}
-
 void QueueManager::initOutFile(std::string outfile) {
-    connectionManager.init(outfile);
+    connectionManager.initOutFile(outfile);
 }
 
 void QueueManager::endWork() {

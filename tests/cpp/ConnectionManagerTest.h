@@ -9,8 +9,8 @@
 class ConManTest : public ::testing::Test {
 protected:
     void SetUp() {
-        conMan.getSettings().init(new InitByXML("../../../test.xml"));
-        conMan.init("file1");
+        Settings::getInstance().initFields(new InitByXML("../../../test.xml"));
+        conMan.initOutFile("file1");
     }
 
     void TearDown() {

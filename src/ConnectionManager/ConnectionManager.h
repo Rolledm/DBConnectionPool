@@ -9,7 +9,7 @@
 
 class ConnectionManager {
 public:
-    void init(std::string outFile);
+    void initOutFile(std::string outFile);
     void newConnection();
     void removeConnection(std::shared_ptr<Connection> connection);
     std::shared_ptr<Connection> findConnection();
@@ -18,12 +18,10 @@ public:
     void endWork();
 
     int getNumOfOpenedConnections();
-    Settings& getSettings();
 
     void watchForUnusedConnections();
 
 private:
-    Settings settings;
     std::string outFile;
     std::atomic<int> numOfOpenedConnections;
     std::mutex _lock;

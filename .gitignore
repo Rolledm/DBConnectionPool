@@ -13,3 +13,4 @@ tests/cpp/Makefile
 tests/cpp/mainTest
 src/file1
 tests/cpp/file1
+tests/py/sample_0.log

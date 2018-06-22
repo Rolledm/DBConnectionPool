@@ -38,7 +38,7 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
                     }
                     file.close();
 
-                    queueManager.initSettings(new InitByXML(argv[i+1]));
+                    Settings::getInstance().initFields(new InitByXML(argv[i+1]));
                     isInitialised = true;
                     i++;
                 } else {

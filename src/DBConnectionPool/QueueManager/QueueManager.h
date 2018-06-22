@@ -10,7 +10,6 @@ public:
     void push(std::string task);
     std::string pop();
     
-    void initSettings(Initialisable* init);
     void initOutFile(std::string);
     void endWork();
 

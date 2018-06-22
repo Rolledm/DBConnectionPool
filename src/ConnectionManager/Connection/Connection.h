@@ -11,10 +11,10 @@
 class Connection {
 
 public:
-    Connection(Settings settings);
+    Connection();
     ~Connection();
 
-    void init(Settings settings);
+    void init();
 
 
     MYSQL mysql;

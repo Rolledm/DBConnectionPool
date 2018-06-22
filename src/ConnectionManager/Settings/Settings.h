@@ -8,8 +8,19 @@
 
 class Settings {
 public:
-    void init(Initialisable* init);
+    static Settings& getInstance();
+    void initFields(Initialisable* settingsInitialiser);
 
+    std::string getUsername();
+    std::string getPassword();
+    std::string getHost();
+    std::string getDataBase();
+    int getPort();
+    int getCliFlag();
+    std::pair<int, int> getNumOfConnections();
+    int getTimeout();
+
+private:
     std::string username;
     std::string password;
     std::string host;
@@ -19,6 +30,11 @@ public:
 
     std::pair<int, int> numOfConnections; // first - min, second - max
     int timeout; // in seconds
+
+private:
+    Settings() = default;
+    Settings(const Settings&) = delete;
+    Settings& operator=(Settings&) = delete;
 
 };
 
