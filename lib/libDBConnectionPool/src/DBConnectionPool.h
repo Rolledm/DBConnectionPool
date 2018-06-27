@@ -1,11 +1,13 @@
-#ifndef QUEUEMANAGER_H
-#define QUEUEMANAGER_H
+#ifndef DBCONNECTIONPOOL_H
+#define DBCONNECTIONPOOL_H
 
-#include "../../ConnectionManager/ConnectionManager.h"
+#include "ConnectionManager.h"
 #include <list>
 
-class QueueManager {
+class DBConnectionPool {
 public:
+    ~DBConnectionPool();
+
     void startWork();
     void push(std::string task);
     std::string pop();

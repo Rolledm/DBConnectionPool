@@ -4,9 +4,10 @@
 #include <ctime>
 #include <memory>
 #include <mysql.h>
+#include <atomic>
 
-#include "../Settings/Settings.h"
-#include "../../Logger/Logger.h"
+#include "Settings.h"
+#include "../../libLogger/src/Logger.h"
 
 class Connection {
 

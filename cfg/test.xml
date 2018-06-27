@@ -1,0 +1,13 @@
+<settings>
+    <username>user</username>
+    <password>123</password>
+    <host>localhost</host>
+    <data_base>db_test</data_base>
+    <port>3306</port>
+    <cli_flag>0</cli_flag>    
+    <numOfConnections>
+	<min>1</min>
+	<max>1</max>
+    </numOfConnections>
+    <timeout>2</timeout>
+</settings>

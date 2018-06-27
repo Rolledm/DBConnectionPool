@@ -4,7 +4,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../../src/DBConnectionPool/DBConnectionPool.h"
+#include "../../src/DBConnectionPool/DBConnectionPool_interface.h"
 
 class ConManTest : public ::testing::Test {
 protected:

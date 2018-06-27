@@ -18,6 +18,7 @@ void Settings::initFields(Initialisable* settingsInitialiser) {
    numOfConnections.second = settingsInitialiser->get("settings.numOfConnections.max", 1);
    timeout = settingsInitialiser->get("settings.timeout", 0);
    
+   isInitialised = true;
 
     delete settingsInitialiser;
 }
@@ -52,4 +53,8 @@ std::pair<int, int> Settings::getNumOfConnections() {
 
 int Settings::getTimeout() {
     return timeout;
+}
+
+bool Settings::getIsInitialised() {
+    return isInitialised;
 }

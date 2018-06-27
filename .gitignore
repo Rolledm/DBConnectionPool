@@ -14,3 +14,12 @@ tests/cpp/mainTest
 src/file1
 tests/cpp/file1
 tests/py/sample_0.log
+src/Logger/build/*
+
+build/*
+lib/libDBConnectionPool/build/*
+lib/libLogger/build/*
+unit_tests/build/*
+
+bb_tests/file1
+bb_tests/*.log

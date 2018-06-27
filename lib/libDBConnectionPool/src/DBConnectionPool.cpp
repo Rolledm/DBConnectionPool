@@ -1,13 +1,14 @@
-#include "QueueManager.h"
+#include "DBConnectionPool.h"
 
 #include <thread>
 #include <chrono>
 
 #include <ctime>
 
-#include "../../Logger/Logger.h"
+#include "../../libLogger/src/Logger.h"
 
-void QueueManager::startWork() {
+void DBConnectionPool::startWork() {
+
     std::thread thread(&ConnectionManager::watchForUnusedConnections, &connectionManager);  // starting killer of unused connections
     
     while (true) {
@@ -29,12 +30,12 @@ void QueueManager::startWork() {
 }
 
 
-void QueueManager::push(std::string task) {
+void DBConnectionPool::push(std::string task) {
     std::lock_guard<std::mutex> locker(_lock);
     queue.emplace_back(task);
 }
 
-std::string QueueManager::pop() {
+std::string DBConnectionPool::pop() {
     std::lock_guard<std::mutex> locker(_lock);
 
     std::string str = queue.front();
@@ -42,10 +43,14 @@ std::string QueueManager::pop() {
     return str;
 }
 
-void QueueManager::initOutFile(std::string outfile) {
+void DBConnectionPool::initOutFile(std::string outfile) {
     connectionManager.initOutFile(outfile);
 }
 
-void QueueManager::endWork() {
+void DBConnectionPool::endWork() {
+    connectionManager.endWork();
+}
+
+DBConnectionPool::~DBConnectionPool() {
     connectionManager.endWork();
 }

@@ -4,17 +4,20 @@
 #include <vector>
 #include <mutex>
 
-#include "Settings/Settings.h"
-#include "Connection/Connection.h"
+#include "Settings.h"
+#include "Connection.h"
 
 class ConnectionManager {
 public:
+    ConnectionManager() {numOfOpenedConnections = 0;}
+    ~ConnectionManager();
+
     void initOutFile(std::string outFile);
     void newConnection();
     void removeConnection(std::shared_ptr<Connection> connection);
     std::shared_ptr<Connection> findConnection();
     void start(std::string command, std::shared_ptr<Connection> connection);
-    size_t numOfFreeConnections();
+    int numOfFreeConnections();
     void endWork();
 
     int getNumOfOpenedConnections();

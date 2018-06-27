@@ -5,7 +5,7 @@
 #include <chrono>
 #include <algorithm>
 
-#include "../Logger/Logger.h"
+#include "../../libLogger/src/Logger.h"
 
 //#define DBG
 
@@ -50,7 +50,6 @@ void ConnectionManager::start(std::string command, std::shared_ptr<Connection> c
     #ifdef DBG
         std::this_thread::sleep_for(std::chrono::seconds(3));
     #endif
-    std::ofstream file(outFile, std::ios::app);
     MYSQL_RES *result;
     MYSQL_ROW row;
     int query_state;
@@ -58,7 +57,6 @@ void ConnectionManager::start(std::string command, std::shared_ptr<Connection> c
     query_state = mysql_query(connection->connection, command.c_str());
     if (query_state != 0) {
         BOOST_LOG_SEV(Logger::getInstance().lg, warning) << mysql_error(connection->connection);
-        file.close();
         connection->time = std::time(nullptr);
         connection->isBusy = false;
         return;
@@ -66,12 +64,13 @@ void ConnectionManager::start(std::string command, std::shared_ptr<Connection> c
     result = mysql_store_result(connection->connection);
 
     std::lock_guard<std::mutex> locker(_lock);
+    std::ofstream file(outFile, std::ios::app);
     if (result != nullptr) {
         file << "\n=========================\n\n";    
         while (( row = mysql_fetch_row(result)) != nullptr) {
-            unsigned int num_fields;
 
-            num_fields = mysql_num_fields(result);
+            unsigned int num_fields = mysql_num_fields(result);
+
             for(unsigned int i = 0; i < num_fields; i++)
             {
                 file << row[i] << "\t";
@@ -89,8 +88,8 @@ void ConnectionManager::start(std::string command, std::shared_ptr<Connection> c
     connection->isBusy = false;
 }
 
-size_t ConnectionManager::numOfFreeConnections() {
-    size_t num = 0;
+int ConnectionManager::numOfFreeConnections() {
+    int num = 0;
     std::lock_guard<std::mutex> locker(_lock);    
     
     for (auto& it : connections) {
@@ -119,11 +118,22 @@ void ConnectionManager::watchForUnusedConnections() {
 }
 
 void ConnectionManager::endWork() {
-    std::lock_guard<std::mutex> locker(_lock);
-    connections.clear();
-    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "All connections closed.";
+    if (numOfOpenedConnections == 0) return;
+    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Waiting for connections.";    
+    while (true) {
+        if (numOfFreeConnections() == numOfOpenedConnections) {
+            std::lock_guard<std::mutex> locker(_lock);
+            connections.clear();
+            BOOST_LOG_SEV(Logger::getInstance().lg, info) << "All connections closed.";
+            break;
+        }
+    }
 }
 
 int ConnectionManager::getNumOfOpenedConnections() {
     return numOfOpenedConnections;
+}
+
+ConnectionManager::~ConnectionManager() {
+    endWork();
 }

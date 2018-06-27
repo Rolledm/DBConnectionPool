@@ -1,16 +1,19 @@
-#include "DBConnectionPool.h"
+#include "DBConnectionPool_interface.h"
 
-DBConnectionPool::DBConnectionPool(int argc, char** argv) {
+DBConnectionPool_interface::DBConnectionPool_interface() {
     sev_lvl = "debug";          //setting
     outFile = "file1";          //default
-    isInitialised = false;      //values
     Logger::getInstance().init(sev_lvl);        
-    handleArguments(argc, argv);
-    if (isInitialised == false) {
+}
+
+void DBConnectionPool_interface::initFields() {
+    if (Settings::getInstance().getIsInitialised() == false) {
         throw "Initialiser not specified.";
     }
-    Logger::getInstance().changeSeverity(sev_lvl);  //handle args and init components
-    queueManager.initOutFile(outFile);
+    
+    
+    //Logger::getInstance().changeSeverity(sev_lvl);  //handle args and init components
+    pool.initOutFile(outFile);
 
     std::cout << "Hello." << std::endl;
 
@@ -23,8 +26,7 @@ DBConnectionPool::DBConnectionPool(int argc, char** argv) {
 }
 
 
-
-void DBConnectionPool::handleArguments(int argc, char** argv) {
+/*void DBConnectionPool::handleArguments(int argc, char** argv) {
     if (argc == 1) {
         showHelp();
         exit(0);
@@ -66,12 +68,14 @@ void DBConnectionPool::handleArguments(int argc, char** argv) {
             }
         }
     }
-}
+}*/
 
 
-void DBConnectionPool::startWork() {
+void DBConnectionPool_interface::startWork() {
+    initFields();
+
     std::string promt;
-    std::thread thread(&QueueManager::startWork, &queueManager);
+    std::thread thread(&DBConnectionPool::startWork, &pool);
     thread.detach();
     while (true) {
         std::cout << "Enter your command: ";
@@ -86,21 +90,21 @@ void DBConnectionPool::startWork() {
                 continue;
             }
             while (getline(file, promt)) {
-                queueManager.push(promt);      
+                pool.push(promt);      
             }
             continue;
         }
-        queueManager.push(promt);              
+        pool.push(promt);              
     }
 }
 
-void DBConnectionPool::endWork() {
-    queueManager.endWork();
+void DBConnectionPool_interface::endWork() {
+    pool.endWork();
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
     exit(0);
 }
 
-void DBConnectionPool::showHelp() {
+void DBConnectionPool_interface::showHelp() {
     std::cout << "DBConnectionPool - utility for multi-thread work w/ database." << std::endl;
     std::cout << "Usage: ./main [OPTIONS]" << std::endl << std::endl;
     std::cout << "Available options:" << std::endl;
@@ -111,4 +115,8 @@ void DBConnectionPool::showHelp() {
     std::cout << "debug, info, warning, error, fatal." << std::endl << std::endl;
     std::cout << "Example of usage" << std::endl;
     std::cout << "./main -x ../../test.xml -o ~/file1 -l info" << std::endl;
+}
+
+void DBConnectionPool_interface::setOutFile(std::string outFile) {
+    this->outFile = outFile;
 }

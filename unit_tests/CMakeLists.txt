@@ -10,10 +10,10 @@ find_package(Threads)
 
 include_directories(${GTEST_INCLUDE_DIRS} /usr/include/mysql ${Boost_INCLUDE_DIR})
 
-add_executable(mainTest mainTest.cpp ../../src/DBConnectionPool/DBConnectionPool.cpp ../../src/DBConnectionPool/QueueManager/QueueManager.cpp
-                ../../src/Logger/Logger.cpp ../../src/ConnectionManager/Initialisable/InitByXML.cpp ../../src/ConnectionManager/Connection/Connection.cpp
-                ../../src/ConnectionManager/ConnectionManager.cpp ../../src/ConnectionManager/Settings/Settings.cpp
-                LogTest.cpp ConnectionManagerTest.cpp)
+add_executable(mainTest src/mainTest.cpp ../src/DBConnectionPool/DBConnectionPool_interface.cpp ../src/DBConnectionPool/DBPool/DBConnectionPool.cpp
+                ../src/Logger/Logger.cpp ../src/ConnectionManager/Initialisable/InitByXML.cpp ../src/ConnectionManager/Connection/Connection.cpp
+                ../src/ConnectionManager/ConnectionManager.cpp ../src/ConnectionManager/Settings/Settings.cpp
+                src/LogTest.cpp src/ConnectionManagerTest.cpp)
 
 target_link_libraries(mainTest mysqlclient ${GTEST_LIBRARIES} ${Boost_LOG_LIBRARY} 
                         ${CMAKE_THREAD_LIBS_INIT} -lz -lm -lrt -latomic -ldl 

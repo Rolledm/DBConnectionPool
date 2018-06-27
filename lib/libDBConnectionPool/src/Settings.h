@@ -3,8 +3,8 @@
 
 #include <utility>
 #include <string>
-#include "../Initialisable/Initialisable.h"
-#include "../Initialisable/InitByXML.h"
+#include "Initialisable.h"
+#include "InitByXML.h"
 
 class Settings {
 public:
@@ -19,6 +19,7 @@ public:
     int getCliFlag();
     std::pair<int, int> getNumOfConnections();
     int getTimeout();
+    bool getIsInitialised();
 
 private:
     std::string username;
@@ -28,11 +29,13 @@ private:
     int port;
     int cli_flag;
 
+    bool isInitialised;
+
     std::pair<int, int> numOfConnections; // first - min, second - max
     int timeout; // in seconds
 
 private:
-    Settings() = default;
+    Settings() {isInitialised = false;}
     Settings(const Settings&) = delete;
     Settings& operator=(Settings&) = delete;
 
