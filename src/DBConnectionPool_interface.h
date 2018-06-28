@@ -15,14 +15,10 @@ public:
     ~DBConnectionPool_interface() = default;
     void initFields();
     void startWork();
-    void endWork();
     static void showHelp();
 
-    void setOutFile(std::string outFile);
-    
 protected:
     DBConnectionPool pool;
-    std::string outFile;
     std::string sev_lvl;
 
 private:

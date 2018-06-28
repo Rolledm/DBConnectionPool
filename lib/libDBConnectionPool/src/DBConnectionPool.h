@@ -11,8 +11,8 @@ public:
     void startWork();
     void push(std::string task);
     std::string pop();
+    void initConnections();
     
-    void initOutFile(std::string);
     void endWork();
 
 private:

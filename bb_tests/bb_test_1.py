@@ -49,28 +49,19 @@ def summary(lst):
 
 l = list()    
 
-process = subprocess.call(["../build/example", "-x"])   # only -x key w/out path to file
+process = subprocess.call(["../build/quickSQLClient", "-x"])   # only -x key w/out path to file
 l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror1_-x", "only -x"))
 
-process = subprocess.call(["../build/example", "-o"])   # only -o key w/out path to file
-l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror2_-o", "only -o"))
-
-process = subprocess.call(["../build/example", "-x", "-o"]) # two keys w/out path to files
-l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror3_-x-o", "-x -o"))
-
-process = subprocess.call(["../build/example", "-o", "~/file1"]) # correct initialising out file but w/out initialisation of .xml file
-l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror4_no_init", "valid file but no initialiser"))
-
-process = subprocess.call(["../build/example", "-l", "fatal"])  # correct initialising severity level but w/out initialisation of .xml file
+process = subprocess.call(["../build/quickSQLClient", "-l", "fatal"])  # correct initialising severity level but w/out initialisation of .xml file
 l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror5_fatal", "fatal sev_lvl"))
 
-process = subprocess.call(["../build/example", "-x", "qqqqqq"]) # incorrect path to .xml file
+process = subprocess.call(["../build/quickSQLClient", "-x", "qqqqqq"]) # incorrect path to .xml file
 l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror6_incorrect", "incorrect_file"))
 
-process = subprocess.call(["../build/example", "-x", "test_files/clear.xml"])  # trying to launch w/ clear .xml file
+process = subprocess.call(["../build/quickSQLClient", "-x", "test_files/clear.xml"])  # trying to launch w/ clear .xml file
 l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror7_clear_xml", "clear xml"))
 
-process = subprocess.call(["../build/example", "-x", "test_files/clear.xml", "-l", "fatal"])  # like previous but w/ fatal severity
+process = subprocess.call(["../build/quickSQLClient", "-x", "test_files/clear.xml", "-l", "fatal"])  # like previous but w/ fatal severity
 l.append(ASSERT_EQ_LOG_FILES("sample_0.log", "test_files/logerror8_clear_fatal", "clear xml w/ fatal sev_lvl"))
 
 #for example of wrong test

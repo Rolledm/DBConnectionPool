@@ -7,16 +7,6 @@
 
 #include "../../libLogger/src/Logger.h"
 
-//#define DBG
-
-void ConnectionManager::initOutFile(std::string outFile) {
-    numOfOpenedConnections = 0;
-    this->outFile = outFile;
-    for (int i = 0; i < Settings::getInstance().getNumOfConnections().first; i++) {
-        newConnection();
-    }
-}
-
 void ConnectionManager::newConnection() {
     std::lock_guard<std::mutex> locker(_lock);
     if (numOfOpenedConnections < Settings::getInstance().getNumOfConnections().second) {
@@ -33,6 +23,11 @@ void ConnectionManager::removeConnection(std::shared_ptr<Connection> connection)
     numOfOpenedConnections--;
 }
 
+void ConnectionManager::startWork() {
+    std::thread thread(&ConnectionManager::watchForUnusedConnections, this);  // starting killer of unused connections
+    thread.detach();
+}
+
 std::shared_ptr<Connection> ConnectionManager::findConnection() {
     std::lock_guard<std::mutex> locker(_lock);
     std::shared_ptr<Connection> temp = nullptr;
@@ -46,10 +41,26 @@ std::shared_ptr<Connection> ConnectionManager::findConnection() {
     return temp;
 }
 
-void ConnectionManager::start(std::string command, std::shared_ptr<Connection> connection) {
-    #ifdef DBG
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-    #endif
+void ConnectionManager::handleQuery(std::string command) {
+
+    while(true)
+    {
+        std::shared_ptr<Connection> tempConnection = findConnection();
+        if (tempConnection != nullptr) {
+            //std::string task = pop();
+            std::thread thread(&ConnectionManager::startQuery, this, command, tempConnection);
+            thread.detach();
+            break;
+        } else {
+            if (getNumOfOpenedConnections() < Settings::getInstance().getNumOfConnections().second) {
+                newConnection();
+            }
+        }
+    }
+    
+}
+
+void ConnectionManager::startQuery(std::string command, std::shared_ptr<Connection> connection) {
     MYSQL_RES *result;
     MYSQL_ROW row;
     int query_state;
@@ -64,7 +75,7 @@ void ConnectionManager::start(std::string command, std::shared_ptr<Connection> c
     result = mysql_store_result(connection->connection);
 
     std::lock_guard<std::mutex> locker(_lock);
-    std::ofstream file(outFile, std::ios::app);
+    std::ofstream file(Settings::getInstance().getOutFile(), std::ios::app);
     if (result != nullptr) {
         file << "\n=========================\n\n";    
         while (( row = mysql_fetch_row(result)) != nullptr) {
@@ -117,9 +128,12 @@ void ConnectionManager::watchForUnusedConnections() {
     }
 }
 
-void ConnectionManager::endWork() {
+int ConnectionManager::getNumOfOpenedConnections() {
+    return numOfOpenedConnections;
+}
+
+ConnectionManager::~ConnectionManager() {
     if (numOfOpenedConnections == 0) return;
-    BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Waiting for connections.";    
     while (true) {
         if (numOfFreeConnections() == numOfOpenedConnections) {
             std::lock_guard<std::mutex> locker(_lock);
@@ -128,12 +142,4 @@ void ConnectionManager::endWork() {
             break;
         }
     }
-}
-
-int ConnectionManager::getNumOfOpenedConnections() {
-    return numOfOpenedConnections;
-}
-
-ConnectionManager::~ConnectionManager() {
-    endWork();
 }

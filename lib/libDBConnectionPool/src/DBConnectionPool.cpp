@@ -8,27 +8,21 @@
 #include "../../libLogger/src/Logger.h"
 
 void DBConnectionPool::startWork() {
+    connectionManager.startWork();
 
-    std::thread thread(&ConnectionManager::watchForUnusedConnections, &connectionManager);  // starting killer of unused connections
-    
     while (true) {
-
+        
         if (queue.size() == 0) continue;
 
-        std::shared_ptr<Connection> tempConnection = connectionManager.findConnection();
-        if (tempConnection != nullptr) {
-            std::string task = pop();
-            std::thread thread(&ConnectionManager::start, &connectionManager, task, tempConnection);
-            thread.detach();
-        } else {
-            if (connectionManager.getNumOfOpenedConnections() < Settings::getInstance().getNumOfConnections().second) {
-                connectionManager.newConnection();
-            }
-        }
-        
+        connectionManager.handleQuery(pop());
     }
 }
 
+void DBConnectionPool::initConnections() {
+    for (int i = 0; i < Settings::getInstance().getNumOfConnections().first; i++) {
+        connectionManager.newConnection();
+    }
+}
 
 void DBConnectionPool::push(std::string task) {
     std::lock_guard<std::mutex> locker(_lock);
@@ -43,14 +37,6 @@ std::string DBConnectionPool::pop() {
     return str;
 }
 
-void DBConnectionPool::initOutFile(std::string outfile) {
-    connectionManager.initOutFile(outfile);
-}
-
-void DBConnectionPool::endWork() {
-    connectionManager.endWork();
-}
-
 DBConnectionPool::~DBConnectionPool() {
-    connectionManager.endWork();
+    BOOST_LOG_SEV(Logger::getInstance().lg, debug) << "DBConnectionPool killed.";
 }

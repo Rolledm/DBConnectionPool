@@ -11,6 +11,7 @@ void Settings::initFields(Initialisable* settingsInitialiser) {
    password = settingsInitialiser->get("settings.password", "");
    host = settingsInitialiser->get("settings.host", "");
    data_base = settingsInitialiser->get("settings.data_base", "");
+   outFile = settingsInitialiser->get("settings.outFile", "outfile1");
 
    port = settingsInitialiser->get("settings.port", 0);
    cli_flag = settingsInitialiser->get("settings.cli_flag", 0);
@@ -57,4 +58,8 @@ int Settings::getTimeout() {
 
 bool Settings::getIsInitialised() {
     return isInitialised;
+}
+
+std::string Settings::getOutFile() {
+    return outFile;
 }

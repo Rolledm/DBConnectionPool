@@ -20,6 +20,7 @@ public:
     std::pair<int, int> getNumOfConnections();
     int getTimeout();
     bool getIsInitialised();
+    std::string getOutFile();
 
 private:
     std::string username;
@@ -33,6 +34,8 @@ private:
 
     std::pair<int, int> numOfConnections; // first - min, second - max
     int timeout; // in seconds
+
+    std::string outFile;
 
 private:
     Settings() {isInitialised = false;}
