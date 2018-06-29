@@ -6,9 +6,12 @@
 #include "Initialisable.h"
 #include "InitByXML.h"
 
+#include <iostream>
+
 class Settings {
 public:
     static Settings& getInstance();
+    ~Settings() {}
     void initFields(Initialisable* settingsInitialiser);
 
     std::string getUsername();

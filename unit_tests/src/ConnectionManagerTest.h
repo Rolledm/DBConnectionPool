@@ -4,20 +4,20 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../../src/DBConnectionPool/DBConnectionPool_interface.h"
+#include "../../src/DBConnectionPool_interface.h"
 
 class ConManTest : public ::testing::Test {
 protected:
     void SetUp() {
-        Settings::getInstance().initFields(new InitByXML("../../../test.xml"));
-        conMan.initOutFile("file1");
+        Settings::getInstance().initFields(new InitByXML("../../cfg/test.xml"));        
+        conMan = new ConnectionManager();
     }
 
     void TearDown() {
-        conMan.endWork();
+        delete conMan;
     }
     
-    ConnectionManager conMan;
+    ConnectionManager* conMan;
 };
 
 #endif

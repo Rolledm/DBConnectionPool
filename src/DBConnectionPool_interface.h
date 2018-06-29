@@ -12,7 +12,7 @@
 class DBConnectionPool_interface {
 public:
     DBConnectionPool_interface();
-    ~DBConnectionPool_interface() = default;
+    ~DBConnectionPool_interface() {BOOST_LOG_SEV(Logger::getInstance().lg, debug) << "~interface";}
     void initFields();
     void startWork();
     static void showHelp();

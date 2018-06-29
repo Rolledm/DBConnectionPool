@@ -11,14 +11,17 @@ public:
     void startWork();
     void push(std::string task);
     std::string pop();
-    void initConnections();
     
     void endWork();
+
+    mutable bool temp;
+
 
 private:
     std::list<std::string> queue; 
     std::mutex _lock;
     ConnectionManager connectionManager;
+
 };
 
 

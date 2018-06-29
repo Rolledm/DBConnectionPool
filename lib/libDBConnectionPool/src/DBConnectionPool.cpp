@@ -9,18 +9,15 @@
 
 void DBConnectionPool::startWork() {
     connectionManager.startWork();
+    temp = false;
 
+    BOOST_LOG_SEV(Logger::getInstance().lg, debug) << "startWork.";
     while (true) {
+        if (temp == true) break;
         
         if (queue.size() == 0) continue;
 
         connectionManager.handleQuery(pop());
-    }
-}
-
-void DBConnectionPool::initConnections() {
-    for (int i = 0; i < Settings::getInstance().getNumOfConnections().first; i++) {
-        connectionManager.newConnection();
     }
 }
 

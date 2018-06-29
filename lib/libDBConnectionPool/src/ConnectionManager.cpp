@@ -7,6 +7,13 @@
 
 #include "../../libLogger/src/Logger.h"
 
+
+void ConnectionManager::initConnections() {
+    for (int i = 0; i < Settings::getInstance().getNumOfConnections().first; i++) {
+        newConnection();
+    }
+}
+
 void ConnectionManager::newConnection() {
     std::lock_guard<std::mutex> locker(_lock);
     if (numOfOpenedConnections < Settings::getInstance().getNumOfConnections().second) {
@@ -24,6 +31,7 @@ void ConnectionManager::removeConnection(std::shared_ptr<Connection> connection)
 }
 
 void ConnectionManager::startWork() {
+    //initConnections();
     std::thread thread(&ConnectionManager::watchForUnusedConnections, this);  // starting killer of unused connections
     thread.detach();
 }
@@ -45,9 +53,9 @@ void ConnectionManager::handleQuery(std::string command) {
 
     while(true)
     {
+        if (isClose) break;
         std::shared_ptr<Connection> tempConnection = findConnection();
         if (tempConnection != nullptr) {
-            //std::string task = pop();
             std::thread thread(&ConnectionManager::startQuery, this, command, tempConnection);
             thread.detach();
             break;
@@ -110,13 +118,21 @@ int ConnectionManager::numOfFreeConnections() {
 }
 
 void ConnectionManager::watchForUnusedConnections() {
+    isClose = false;
+
+    int minNumOfConnections = Settings::getInstance().getNumOfConnections().first;
+    int timeout = Settings::getInstance().getTimeout();
+
     while (true) {
-        if (numOfOpenedConnections > Settings::getInstance().getNumOfConnections().first && numOfFreeConnections() > 0) {
+        if (isClose) break;
+        if (numOfOpenedConnections > minNumOfConnections && numOfFreeConnections() > 0) {
             std::time_t time = std::time(nullptr);
             std::shared_ptr<Connection> temp = nullptr;
             for (auto& it : connections) {
-                if (time - it->time >= Settings::getInstance().getTimeout() && !it->isBusy) {
-                    temp = it;
+                if (isClose) break;            
+                std::shared_ptr<Connection> cnct = it;
+                if (time - cnct->time >= timeout && !cnct->isBusy) {
+                    temp = cnct;
                     break;
                 }
             }
@@ -134,6 +150,7 @@ int ConnectionManager::getNumOfOpenedConnections() {
 
 ConnectionManager::~ConnectionManager() {
     if (numOfOpenedConnections == 0) return;
+    isClose = true;
     while (true) {
         if (numOfFreeConnections() == numOfOpenedConnections) {
             std::lock_guard<std::mutex> locker(_lock);

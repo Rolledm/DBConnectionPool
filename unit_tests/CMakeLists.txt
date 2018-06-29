@@ -10,14 +10,14 @@ find_package(Threads)
 
 include_directories(${GTEST_INCLUDE_DIRS} /usr/include/mysql ${Boost_INCLUDE_DIR})
 
-add_executable(mainTest src/mainTest.cpp ../src/DBConnectionPool/DBConnectionPool_interface.cpp ../src/DBConnectionPool/DBPool/DBConnectionPool.cpp
-                ../src/Logger/Logger.cpp ../src/ConnectionManager/Initialisable/InitByXML.cpp ../src/ConnectionManager/Connection/Connection.cpp
-                ../src/ConnectionManager/ConnectionManager.cpp ../src/ConnectionManager/Settings/Settings.cpp
+add_subdirectory(../lib/libDBConnectionPool/ lib)
+
+add_executable(mainTest src/mainTest.cpp
                 src/LogTest.cpp src/ConnectionManagerTest.cpp)
 
 target_link_libraries(mainTest mysqlclient ${GTEST_LIBRARIES} ${Boost_LOG_LIBRARY} 
                         ${CMAKE_THREAD_LIBS_INIT} -lz -lm -lrt -latomic -ldl 
-                        -lboost_system -lboost_log_setup -lboost_log -lboost_thread -lpthread -fprofile-arcs)
+                        -lboost_system -lboost_log_setup -lboost_log -lboost_thread -lpthread -fprofile-arcs DBConnectionPool)
 
 set(CMAKE_EXE_LINKER_FLAGS "-lpthread -lz -lm -lrt -latomic -ldl -lboost_system -lboost_log_setup -lboost_log -lboost_thread")
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK -fprofile-arcs -ftest-coverage)

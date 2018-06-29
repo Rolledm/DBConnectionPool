@@ -1,8 +1,6 @@
 #include "DBConnectionPool_interface.h"
 
 DBConnectionPool_interface::DBConnectionPool_interface() {
-    sev_lvl = "debug";          //setting
-    Logger::getInstance().init(sev_lvl);        
 }
 
 void DBConnectionPool_interface::initFields() {
@@ -19,8 +17,7 @@ void DBConnectionPool_interface::initFields() {
 
 void DBConnectionPool_interface::startWork() {
     initFields();
-    pool.initConnections();
-    std::cout << "Hello." << std::endl;
+    
 
     std::string promt;
     std::thread thread(&DBConnectionPool::startWork, &pool);
@@ -44,6 +41,7 @@ void DBConnectionPool_interface::startWork() {
         }
         pool.push(promt);              
     }
+    pool.temp = true;
 }
 
 void DBConnectionPool_interface::showHelp() {

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 
-#include "../../src/DBConnectionPool/DBConnectionPool_interface.h"
+#include "../../src/DBConnectionPool_interface.h"
 
 int numOfStrings(std::string filename);
 void log_init_and_write(std::string seg_lvl);
@@ -14,7 +14,7 @@ TEST (LogTest, debug) {
 
 TEST (LogTest, noString) {
     log_init_and_write("");
-    ASSERT_TRUE(numOfStrings("sample_0.log") == 5);   
+    ASSERT_TRUE(numOfStrings("sample_0.log") == 4);   
 }
 
 TEST (LogTest, info) {

@@ -6,9 +6,10 @@ void handleArguments(int argc, char** argv);
 
 int main(int argc, char** argv) {
 
+    Logger::getInstance().init("info");
     try {
+        handleArguments(argc, argv); 
         DBConnectionPool_interface pool;
-        handleArguments(argc, argv);
         pool.startWork();
     } catch (const char* e) {
         std::cout << "Fatal error. Open log file to see error. " << std::endl;
@@ -20,7 +21,7 @@ int main(int argc, char** argv) {
         return 3;
     }
     BOOST_LOG_SEV(Logger::getInstance().lg, info) << "Work ended successfully.";
-    exit(0);
+    //exit(0);
     return 0;
 }
 

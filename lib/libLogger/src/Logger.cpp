@@ -22,7 +22,7 @@ void Logger::init(std::string string) {
 }
 
 void Logger::changeSeverity(std::string sev_lvl) {
-    auto a = logging::trivial::debug;
+    auto a = logging::trivial::info;
     
     if (sev_lvl == "debug") a = logging::trivial::debug;
     else if (sev_lvl == "info") a = logging::trivial::info;

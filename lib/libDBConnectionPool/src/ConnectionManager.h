@@ -9,10 +9,11 @@
 
 class ConnectionManager {
 public:
-    ConnectionManager() {numOfOpenedConnections = 0;}
+    ConnectionManager() : numOfOpenedConnections(0) {initConnections();}
     ~ConnectionManager();
     void startWork();
 
+    void initConnections();
     void newConnection();
     void removeConnection(std::shared_ptr<Connection> connection);
     std::shared_ptr<Connection> findConnection();
@@ -24,6 +25,9 @@ public:
     int getNumOfOpenedConnections();
 
     void watchForUnusedConnections();
+
+    mutable bool isClose;
+
 
 private:
     std::atomic<int> numOfOpenedConnections;

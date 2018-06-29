@@ -2,12 +2,7 @@
 
 import subprocess
 import difflib
-
-def rmSymb(string, symbol):
-    i = 0
-    while string[i] != symbol:
-        i += 1
-    return string[i+1::]
+import re
 
 def ASSERT_EQ_FILES(file1, file2, i, name):
     print("TEST %r:"%name)
@@ -22,7 +17,7 @@ def ASSERT_EQ_FILES(file1, file2, i, name):
         line2 = line2.replace("\n", "")
         
         if (i == 1):  #LOG
-            if (rmSymb(line1, ']') != rmSymb(line2,']')):
+            if (re.sub(r"\[.*\]", "", line1) != re.sub(r"\[.*\]", "", line2)):
                 print("FAILED: %r != %r" %(line1, line2))
                 return False
 
